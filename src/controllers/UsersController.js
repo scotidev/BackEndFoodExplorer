@@ -1,6 +1,6 @@
 const AppError = require("../utils/AppError")
 const { hash, compare } = require("bcryptjs")
-const sqliteConnection = require("../database/sqlite")
+const sqliteConnection = require("../database")
 
 class UsersController {
     async create(request, response) {
