@@ -1,4 +1,0 @@
-migrations:
-users
-products
-ingredients
