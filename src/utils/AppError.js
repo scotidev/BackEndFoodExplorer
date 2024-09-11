@@ -1,3 +1,5 @@
+//para lidar com quaisquer erros da aplicação
+
 class AppError {
     message
     statusCode

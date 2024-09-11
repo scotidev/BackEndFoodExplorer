@@ -1,16 +1,22 @@
 require("express-async-errors")
 
+const migrationsRun = require("./database/sqlite/migrations")
 const AppError = require("./utils/AppError")
-const express = require('express')
 
+const express = require('express')
+const routes = require("./routes")
+
+// configurando a aplicação
 const app = express()
-// para que a aplicação possa lidar com dados .json
 app.use(express.json())
 
-// enable routes
-const routes = require("./routes")
+// habilitar rotas
 app.use(routes)
 
+// para executar o banco de dados
+migrationsRun() 
+
+// lidando com erros da aplicação e retornando uma mensagem
 app.use((error, request, response, next) => {
     if(error instanceof AppError) {
         return response.status(error.statusCode).json({
@@ -29,4 +35,5 @@ app.use((error, request, response, next) => {
 
 //porta do servidor
 const PORT = 3333
+
 app.listen(PORT, () => console.log(`Server is running on PORT ${PORT}`))

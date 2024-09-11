@@ -1,4 +1,6 @@
-class ProductsController {
+const knex = require("../database/knex")
+
+class DishesController {
     async create(request, response) {
         const { title, prince, description, category, ingredients} = request.body
 
@@ -17,4 +19,4 @@ class ProductsController {
     }
 }
 
-module.exports = ProductsController
+module.exports = DishesController

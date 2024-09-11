@@ -1,8 +1,8 @@
-exports.up = knex => knex.schema.createTable("products", table => {
-    table.uuid('id').defaultTo(knex.fn.uuid()).primary();
+exports.up = knex => knex.schema.createTable("dishes", table => {
+    table.increments("id")
     
     table.text("title").notNullable();
-    table.integer("price_in_cents").notNullable();
+    table.decimal("price").notNullable();
     table.text("description").notNullable();
     table.enum("category", ["food", "drink", "dessert"]).notNullable();
     table.text("image");
@@ -13,4 +13,4 @@ exports.up = knex => knex.schema.createTable("products", table => {
 });
 
 
-exports.down = knex => knex.schema.dropTable("products");
+exports.down = knex => knex.schema.dropTable("dishes");
