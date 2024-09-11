@@ -3,11 +3,13 @@ const { Router } = require("express")
 const routes = Router()
 
 //Rotas 
-const usersRoutes = require("./users.routes")
-const productsRoutes = require("./products.routes")
+const usersRouter = require("./users.routes")
+const productsRouter = require("./products.routes")
+const sessionsRouter = require("./sessions.routes")
 
 //Direcionamento para as rotas
-routes.use("/users", usersRoutes)
-routes.use("/products", productsRoutes)
+routes.use("/users", usersRouter)
+routes.use("/products", productsRouter)
+routes.use("/sessions", sessionsRouter)
 
 module.exports = routes;
