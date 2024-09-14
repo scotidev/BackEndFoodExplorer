@@ -10,7 +10,7 @@ const dishesController = new DishesController()
 
 dishesRouter.use(ensureAuthenticated)
 
-dishesRouter.get("/", dishesController.index) 
 dishesRouter.get("/:id", dishesController.show) 
+dishesRouter.get("/", dishesController.index) 
 
 module.exports = dishesRouter

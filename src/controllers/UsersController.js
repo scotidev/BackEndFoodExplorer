@@ -82,7 +82,7 @@ class UsersController {
             user_id]
         )
 
-        return response.json()
+        return response.status(200).json()
     }
 }
 

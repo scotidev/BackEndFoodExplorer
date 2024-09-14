@@ -10,6 +10,9 @@ const routes = require("./routes")
 const app = express()
 app.use(express.json())
 
+// carregar imagens
+app.use("/files/dishFiles", express.static(uploadConfig.UPLOADS_FOLDER));
+
 // habilitar rotas
 app.use(routes)
 

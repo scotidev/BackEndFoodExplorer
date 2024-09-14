@@ -29,7 +29,7 @@ class DishesController {
             "dishes.category",
             "dishes.image"
            ])
-           .whereLike("dishes.title", `%${title}$%`)
+           .whereLike("dishes.title", `%${title}%`)
            .whereIn("name", listedIngredients)
            .innerJoin("dishes", "dishes.id", "ingredients.dish_id")
            .orderBy("dishes.title")
