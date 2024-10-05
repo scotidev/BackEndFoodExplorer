@@ -15,43 +15,37 @@ class DishesController {
     }
 
     async index(request, response) {
-        const { title, ingredients } = request.query
+        const { title } = request.query
 
         let dishes
         
-        if(ingredients) {
-            const listedIngredients = ingredients.split(",").map(ingredient => ingredient.trim())
+        if(title) {
+            const dishesList = await knex("dishes")
+            .whereLike("title", `%${title}$%`).orderBy("title")
 
-           dishes = await knex("ingredients").select([
-            "dishes.id",
-            "dishes.title",
-            "dishes.price",
-            "dishes.category",
-            "dishes.image"
-           ])
-           .whereLike("dishes.title", `%${title}%`)
-           .whereIn("name", listedIngredients)
-           .innerJoin("dishes", "dishes.id", "ingredients.dish_id")
-           .orderBy("dishes.title")
+            if (dishesList.length == 0) {
+                const dishesIngredients = await knex("ingredients")
+                .select("dishes.*")
+                .whereLike("ingredients.title", `%${title}%`)
+                .innerJoin("dishes", "dishes.id", "ingredients.dish_id")
+                .orderBy("dishes.title")
+                .groupBy("dishes.id")
 
+                dishes = dishesIngredients
+            } else {
+                dishes = dishesList
+            }
+            
         } else {
-            dishes = await knex("dishes")
-            .whereLike("title", `%${title}$%`)
+            dishes = await knex("dishes").orderBy("title")
         }
 
-        const dishesIngredients = await knex("ingredients")
-        const dishesContainingIngredients = dishes.map(dish => {
-            const dishIngredient = dishesIngredients.filter(ingredient => ingredient.dish_id === dish.id)
-            
-            return {
-                ...dish,
-                ingredients: dishIngredient
-            }
-        })
+        return response.json(dishes)
 
-        return response.json(dishesContainingIngredients)
+        //retornar os ingredientes também?
     }
 }
+
 
 
 module.exports = DishesController

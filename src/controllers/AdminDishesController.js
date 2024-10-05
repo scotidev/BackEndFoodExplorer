@@ -5,7 +5,7 @@ const DiskStorage = require("../providers/DiskStorage")
 class AdminDishesController {
     async create(request, response) {
         const { title, price, description, category, ingredients} = request.body
-
+        
         const checkIfDishExists = await knex("dishes").where({title}).first()
 
         if(checkIfDishExists) {
@@ -24,21 +24,22 @@ class AdminDishesController {
             image: filename
         }))[0]
 
-        const addIngredient = ingredients.map(ingredient => {
+        const insertIngredients = ingredients.map(ingredient => {
             return {
                 name: ingredient,
                 dish_id
             }
         })
 
-        await knex("ingredients").insert(addIngredient)
-
-        return response.status(200).json()
-    }
-
-    async update(request, response) {
+        await knex("ingredients").insert(insertIngredients)
+        
+        return response.status(201).json("Prato criado com sucesso.")
+      }
+      
+      async update(request, response) {
         const { id } = request.params
         const { title, price, description, category, ingredients, image} = request.body
+
         const dish = await knex("dishes").where({id}).first()
 
         dish.title = title ?? dish.title
@@ -47,47 +48,42 @@ class AdminDishesController {
         dish.category = category ?? dish.category
         dish.image = image ?? dish.image
 
-        await knex ("dishes").where({id}).update(dish)
-        await knex("dishes").where({id}).update("updated_at", knex.fn.now())
-
-        const oneIngredient = typeof(ingredients) === "string";
-
-        let addIngredient
-
-        if (oneIngredient) {
-          addIngredient = {
-            dish_id: dish.id,
-            name: ingredients
-          }
-        } else if (ingredients != "string") {
-          addIngredient = ingredients.map(ingredient => {
-            return {
-              dish_id: dish.id,
-              name : ingredient
-            }
-          })
-        }
+        await knex ("dishes").where({id}).update({
+          title: dish.title,
+          price: dish.price,
+          description: dish.description,
+          category: dish.category
+        })
 
         await knex("ingredients").where({dish_id: id}).delete()
-        await knex("ingredients").where({dish_id: id}).insert(addIngredient)
 
-        return response.status(200).json()
-    }
+        const ingredientsInsert = ingredients?.map((ingredient) => {
+          return {
+            dish_id: id,
+            name: ingredient
+          }
+        })
 
-    async delete(request, response) {
-        const { id } = request.params
-
-        const checkIfDishExists = await knex("dishes").where({id}).first()
-
-        if(!checkIfDishExists) {
-            throw new AppError("Este prato não existe.")
+        if(ingredientsInsert?.length > 0) {
+          await knex("ingredients").insert(ingredientsInsert)
         }
 
-        await knex("dishes").where({id}).delete()
-
-        return response.status(200).json()
+        return response.json("Prato atualizado com sucesso")
     }
-
+      
+      async delete(request, response) {
+          const { id } = request.params
+  
+          const checkIfDishExists = await knex("dishes").where({id}).first()
+  
+          if(!checkIfDishExists) {
+              throw new AppError("Este prato não existe.")
+          }
+  
+          await knex("dishes").where({id}).delete()
+  
+          return response.status(200).json("Prato deletado")
+      }
 }
 
 module.exports = AdminDishesController

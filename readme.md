@@ -1,5 +1,6 @@
-CONFIGS>auth  linha 3
-secret: process.env.AUTH_SECRET || "default",
+CONTROLLERS DISH IMAGE> lógica de imagem
+
+CONTROLLERS DISHCONTROLLER> admin junto do dishes controller?
 
 CONTROLLERS> admin Dishes controller linha 62
         } else if (ingredients != "string") {
@@ -15,7 +16,6 @@ CONTROLLERS> dishes controller
 
 MIGRATIONS> dishes 
 category ENUM && price decimal
-table.text name ou title?
 
 MIGRATIONS> createuser
  isAdmin
@@ -31,8 +31,9 @@ app.use("/files/dishFiles", express.static(uploadConfig.UPLOADS_FOLDER));
 
 >tmp: uploads
 
+
 ## MISSÕES ##
 
-- deixar todas as rotas no insomnia funcionando
-- deixar tudo pronto pra ver o módulo 3 da etapa 10
-- se possível, completar todas as checkboxes do projeto no notion (padrão)
+- rotas INDEX (dishes)
+- rotas UPDATE (adminDishes)
+- (FRONTEND) useNavigate e rotas
