@@ -23,7 +23,7 @@ class SessionsController {
         }
 
         const { secret, expiresIn } = authJWTConfig.jwt
-        const token = sign({}, secret, {subject: String(user.id), expiresIn})
+        const token = sign({role: user.role}, secret, {subject: String(user.id), expiresIn})
 
         return response.json({user, token})
     }

@@ -15,18 +15,18 @@ class DishesController {
     }
 
     async index(request, response) {
-        const { title } = request.query
+        const { name } = request.query
 
         let dishes
         
-        if(title) {
+        if(name) {
             const dishesList = await knex("dishes")
-            .whereLike("title", `%${title}$%`).orderBy("title")
+            .whereLike("title", `%${name}$%`).orderBy("title")
 
             if (dishesList.length == 0) {
                 const dishesIngredients = await knex("ingredients")
                 .select("dishes.*")
-                .whereLike("ingredients.title", `%${title}%`)
+                .whereLike("ingredients.title", `%${name}%`)
                 .innerJoin("dishes", "dishes.id", "ingredients.dish_id")
                 .orderBy("dishes.title")
                 .groupBy("dishes.id")
@@ -37,7 +37,7 @@ class DishesController {
             }
             
         } else {
-            dishes = await knex("dishes").orderBy("title")
+            dishes = await knex("dishes").orderBy("name")
         }
 
         return response.json(dishes)

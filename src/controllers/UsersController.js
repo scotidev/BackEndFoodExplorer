@@ -1,37 +1,37 @@
 const AppError = require("../utils/AppError")
-const sqliteConnection = require("../database/sqlite")
+const knex = require("../database/knex")
 
 // funções para encriptar a senha
 const { hash, compare } = require("bcryptjs")
 
 class UsersController {
     async create(request, response) {
-        const { name, email, password } = request.body
-
-        const database = await sqliteConnection()
-
-        const checkUserExists = await database.get("SELECT * FROM users WHERE email = (?)", [email])
-
-
-        if(!name) {
-            throw new AppError("Nome de usuário obrigatório.")
+        const { name, email, password, role } = request.body
+    
+        const checkUserExists = await knex("users").where({ email }).first()
+    
+        if (checkUserExists) {
+          throw new AppError("Este e-mail já está em uso")
         }
-
-        if(checkUserExists) {
-            throw new AppError("Este email já está sendo utilizado.")
+    
+        if(password.length < 6) {
+          throw new AppError("A senha precisa conter pelo menos 6 caracteres")
         }
-
-        // criptografia
+    
         const hashedPassword = await hash(password, 8)
-
-        // inserindo novo user
-        await database.run(
-            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-            [name, email, hashedPassword]
-        )
-
-        return response.status(201).json()
-    }
+    
+        const user = await knex("users").insert({
+          name,
+          email,
+          password: hashedPassword,
+        })
+    
+        if (!name) {
+          throw new AppError("Nome é obrigatório")
+        }
+    
+        return response.status(201).json({ message: "Usuário cadastrado com sucesso" })
+      }
 
     async update(request, response) {
         const {name, email, password, oldPassword} = request.body

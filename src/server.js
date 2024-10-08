@@ -1,7 +1,6 @@
 require("express-async-errors")
 require("dotenv/config")
 
-const migrationsRun = require("./database/sqlite/migrations")
 const AppError = require("./utils/AppError")
 const uploadConfig = require("./configs/upload")
 
@@ -19,9 +18,6 @@ app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
 
 // habilitar rotas
 app.use(routes)
-
-// para executar o banco de dados
-migrationsRun() 
 
 // lidando com erros da aplicação e retornando uma mensagem
 app.use((error, request, response, next) => {
