@@ -1,7 +1,7 @@
 exports.up = knex => knex.schema.createTable("dishes", (table) => {
     table.increments("id")
     
-    table.text("name").notNullable();
+    table.text("title").notNullable();
     table.text("description").notNullable();
     table.enum("category", ["food", "drink", "dessert"]).notNullable();
     table.decimal("price", 14,2).notNullable();

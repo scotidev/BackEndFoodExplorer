@@ -15,6 +15,7 @@ class DishesController {
     }
 
     async index(request, response) {
+        // nao esta puxando lista nenhuma
         const { name } = request.query
 
         let dishes
