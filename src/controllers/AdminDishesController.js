@@ -47,7 +47,7 @@ class AdminDishesController {
         const { id } = request.params;
 
         // Define valid categories
-        const validCategories = ['Appetizer', 'Main Course', 'Dessert'];
+        const validCategories = ['food', 'drink', 'dessert'];
 
         try {
             // Validate category
@@ -102,31 +102,21 @@ class AdminDishesController {
     async delete(request, response) {
         const { id } = request.params;
 
-        const checkIfDishExists = await knex("dishes").where({ id }).first();
+        const dish = await knex("dishes").where({ id }).first();
 
-        if (!checkIfDishExists) {
-            throw new AppError("Este prato não existe.");
+        if (!dish) {
+            return response.status(404).json({ error: 'Dish not found' });
         }
 
-        // Get the image filename
-        const imageFilename = checkIfDishExists.image;
+        const diskStorage = new DiskStorage();
 
-        // Delete the dish from the database
-        await knex("dishes").where({ id }).delete();
-
-        // Delete the image file if it exists
-        if (imageFilename) {
-            const imagePath = path.join(__dirname, '..', '..', 'tmp', 'uploads', imageFilename);
-            fs.unlink(imagePath, (err) => {
-                if (err) {
-                    console.error("Error deleting image file:", err);
-                } else {
-                    console.log("Image file deleted:", imagePath);
-                }
-            });
+        if (dish.image) {
+            await diskStorage.deleteFile(dish.image);
         }
 
-        return response.status(200).json("Prato deletado");
+        await knex("dishes").where({ id }).del();
+
+        return response.status(204).send();
     }
 }
 

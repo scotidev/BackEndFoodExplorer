@@ -24,6 +24,6 @@ adminDishesRouter.use(verifyUserAuthorization("admin"))
 adminDishesRouter.post("/", upload.single("image"), adminDishesController.create)
 adminDishesRouter.delete("/:id", adminDishesController.delete)
 adminDishesRouter.put("/:id", adminDishesController.update)
-adminDishesRouter.patch("/dishImage/:id", upload.single("image"), dishImagesController.update)
+adminDishesRouter.patch("/:id", upload.single("image"), dishImagesController.update)
 
 module.exports = adminDishesRouter

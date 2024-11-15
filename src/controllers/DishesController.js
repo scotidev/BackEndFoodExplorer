@@ -1,52 +1,51 @@
-const knex = require("../database/knex")
+const knex = require("../database/knex");
 
 class DishesController {
-    
     async show(request, response) {
-        const { id } = request.params
+        const { id } = request.params;
 
-        const dish = await knex("dishes").where({id}).first()
-        const ingredients = await knex("ingredients").where({dish_id: id}).orderBy("name")
+        const dish = await knex("dishes").where({ id }).first();
+        const ingredients = await knex("ingredients").where({ dish_id: id }).orderBy("name");
 
         return response.status(200).json({
             ...dish,
             ingredients
-        })
+        });
     }
 
     async index(request, response) {
-        // nao esta puxando lista nenhuma
-        const { name } = request.query
+        const { title } = request.query;
 
-        let dishes
-        
-        if(name) {
-            const dishesList = await knex("dishes")
-            .whereLike("title", `%${name}$%`).orderBy("title")
+        let dishes;
 
-            if (dishesList.length == 0) {
-                const dishesIngredients = await knex("ingredients")
-                .select("dishes.*")
-                .whereLike("ingredients.title", `%${name}%`)
-                .innerJoin("dishes", "dishes.id", "ingredients.dish_id")
-                .orderBy("dishes.title")
-                .groupBy("dishes.id")
+        if (title) {
+            dishes = await knex("dishes")
+                .whereLike("title", `%${title}%`)
+                .orderBy("title");
 
-                dishes = dishesIngredients
-            } else {
-                dishes = dishesList
+            if (dishes.length === 0) {
+                dishes = await knex("ingredients")
+                    .select("dishes.*")
+                    .innerJoin("dishes", "dishes.id", "ingredients.dish_id")
+                    .whereLike("ingredients.name", `%${title}%`)
+                    .orderBy("dishes.title")
+                    .groupBy("dishes.id");
             }
-            
         } else {
-            dishes = await knex("dishes").orderBy("name")
+            dishes = await knex("dishes").orderBy("title");
         }
 
-        return response.json(dishes)
+        // Fetch ingredients for each dish
+        const dishesWithIngredients = await Promise.all(dishes.map(async (dish) => {
+            const ingredients = await knex("ingredients").where({ dish_id: dish.id }).orderBy("name");
+            return {
+                ...dish,
+                ingredients
+            };
+        }));
 
-        //retornar os ingredientes também?
+        return response.json(dishesWithIngredients);
     }
 }
 
-
-
-module.exports = DishesController
+module.exports = DishesController;
