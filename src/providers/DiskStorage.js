@@ -5,7 +5,7 @@ const uploadConfig = require("../configs/upload")
 
 class DiskStorage {
     async saveFile(file) {
-        // para mover o arquivo do diretório temporário para o de upload
+
         await fs.promises.rename(
             path.resolve(uploadConfig.TMP_FOLDER, file),
             path.resolve(uploadConfig.UPLOADS_FOLDER, file)

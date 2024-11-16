@@ -1,12 +1,11 @@
 const AppError = require("../utils/AppError")
 const knex = require("../database/knex")
 
-// funções para encriptar a senha
 const { hash, compare } = require("bcryptjs")
 
 class UsersController {
     async create(request, response) {
-        const { name, email, password, role } = request.body
+        const { name, email, password } = request.body
     
         const checkUserExists = await knex("users").where({ email }).first()
     
@@ -18,6 +17,10 @@ class UsersController {
           throw new AppError("A senha precisa conter pelo menos 6 caracteres")
         }
     
+        if (!name || !email || !password) {
+          throw new AppError("Preencha todos os campos")
+        }
+    
         const hashedPassword = await hash(password, 8)
     
         const user = await knex("users").insert({
@@ -26,14 +29,10 @@ class UsersController {
           password: hashedPassword,
         })
     
-        if (!name) {
-          throw new AppError("Nome é obrigatório")
-        }
-    
-        return response.status(201).json({ message: "Usuário cadastrado com sucesso" })
+        return response.status(201).json("Usuário cadastrado com sucesso")
       }
 
-    async update(request, response) {
+   /* async update(request, response) {
         const {name, email, password, oldPassword} = request.body
         const user_id = request.user.id
 
@@ -59,7 +58,6 @@ class UsersController {
 
         if(password && oldPassword) {
 
-            // comparando a senha atual e a antiga
             const checkOldPassword = await compare(oldPassword, user.password)
 
             if(!checkOldPassword) {
@@ -83,7 +81,7 @@ class UsersController {
         )
 
         return response.status(200).json()
-    }
+    } */
 }
 
 module.exports = UsersController
