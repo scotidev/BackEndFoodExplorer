@@ -17,10 +17,6 @@ class UsersController {
       throw new AppError("A senha precisa conter pelo menos 6 caracteres");
     }
 
-    if (!name || !email || !password) {
-      throw new AppError("Preencha todos os campos");
-    }
-
     const hashedPassword = await hash(password, 8);
 
     await knex("users").insert({
@@ -29,7 +25,7 @@ class UsersController {
       password: hashedPassword,
     });
 
-    return response.status(201).json("Usuário cadastrado com sucesso");
+    return response.status(201).json();
   }
 
   async update(request, response) {

@@ -10,15 +10,19 @@ class AdminDishesController {
       throw new AppError("Preencha todos os campos");
     }
 
-    const checkIfDishExists = await knex("dishes").where({ title }).first();
-
-    if (checkIfDishExists) {
-      throw new AppError("Este prato já foi cadastrado.");
+    if (!request.file) {
+      throw new AppError("A imagem do prato é obrigatória.");
     }
 
     const dishFilename = request.file.filename;
     const diskStorage = new DiskStorage();
     const filename = await diskStorage.saveFile(dishFilename);
+
+    const checkIfDishExists = await knex("dishes").where({ title }).first();
+
+    if (checkIfDishExists) {
+      throw new AppError("Este prato já foi cadastrado.");
+    }
 
     const dish_id = (
       await knex("dishes").insert({
@@ -30,7 +34,11 @@ class AdminDishesController {
       })
     )[0];
 
-    const insertIngredients = ingredients.map((ingredient) => {
+    const ingredientsArray = Array.isArray(ingredients)
+      ? ingredients
+      : [ingredients];
+
+    const insertIngredients = ingredientsArray.map((ingredient) => {
       return {
         name: ingredient,
         dish_id,
