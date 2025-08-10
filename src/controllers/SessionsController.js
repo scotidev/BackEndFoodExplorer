@@ -31,8 +31,8 @@ class SessionsController {
     // Define o token como um cookie HTTP-only
     response.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24, // cookie dura 24 horas
     });
 
