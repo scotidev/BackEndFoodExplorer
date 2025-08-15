@@ -8,6 +8,7 @@ const dishesRouter = require("./dishes.routes");
 const sessionsRouter = require("./sessions.routes");
 const adminDishesRouter = require("./adminDishes.routes");
 const favoritesRouter = require("./favorites.routes");
+const cartRouter = require("./cart.routes");
 
 //Direcionamento para as rotas
 routes.use("/users", usersRouter);
@@ -15,5 +16,6 @@ routes.use("/dishes", dishesRouter);
 routes.use("/adminDishes", adminDishesRouter);
 routes.use("/sessions", sessionsRouter);
 routes.use("/favorites", favoritesRouter);
+routes.use("/cart", cartRouter);
 
 module.exports = routes;
