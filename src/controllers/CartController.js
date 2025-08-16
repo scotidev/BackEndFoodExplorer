@@ -49,6 +49,7 @@ class CartController {
       .select([
         "cart_items.id",
         "cart_items.quantity",
+        "dishes.id as dish_id",
         "dishes.title",
         "dishes.price",
         "dishes.image",
