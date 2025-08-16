@@ -11,7 +11,7 @@ exports.up = (knex) => {
       .references("id")
       .inTable("dishes")
       .onDelete("CASCADE");
-    table.integer("quantity").defaultTo(1);
+    table.integer("quantity");
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
   });

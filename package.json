@@ -6,7 +6,8 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "node --watch ./src/server.js",
-    "migrate": "knex migrate:latest"
+    "migrate": "knex migrate:latest",
+    "rollback": "knex migrate:rollback"
   },
   "keywords": [],
   "author": "Gabriel Scoti de Oliveira",

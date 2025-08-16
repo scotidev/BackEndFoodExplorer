@@ -2,30 +2,43 @@ const knex = require("../database/knex");
 
 class CartController {
   async create(request, response) {
-    const user_id = request.user.id;
     const { dish_id, quantity } = request.body;
+    const user_id = request.user.id;
 
-    await knex("cart_items").insert({
+    const [existingCartItem] = await knex("cart_items").where({
       user_id,
       dish_id,
-      quantity,
     });
 
-    return response.status(201).json({
-      message: "Prato adicionado ao carrinho.",
-    });
+    if (existingCartItem) {
+      const newQuantity = existingCartItem.quantity + quantity;
+      await knex("cart_items")
+        .where({ id: existingCartItem.id })
+        .update({ quantity: newQuantity });
+
+      return response
+        .status(200)
+        .json({ message: "Prato atualizado no carrinho." });
+    } else {
+      await knex("cart_items").insert({
+        user_id,
+        dish_id,
+        quantity,
+      });
+
+      return response
+        .status(201)
+        .json({ message: "Prato adicionado ao carrinho." });
+    }
   }
 
   async update(request, response) {
     const { id } = request.params;
     const { quantity } = request.body;
-    const user_id = request.user.id;
 
-    await knex("cart_items").where({ id, user_id }).update({ quantity });
+    await knex("cart_items").where({ id }).update({ quantity });
 
-    return response.status(200).json({
-      message: "Quantidade atualizada no carrinho.",
-    });
+    return response.json({ message: "Quantidade atualizada com sucesso." });
   }
 
   async index(request, response) {
